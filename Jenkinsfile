@@ -1,8 +1,9 @@
 pipeline {
   agent any
 
-  tools {
-    nodejs 'node18'
+  environment {
+    IMAGE_NAME = "hello-jenkins"
+    CONTAINER_NAME = "hello-jenkins-app"
   }
 
   stages {
@@ -12,18 +13,17 @@ pipeline {
       }
     }
 
-    stage('Install') {
+    stage('Build Docker Image') {
       steps {
-        sh 'npm install'
+        sh 'docker build -t $IMAGE_NAME:latest .'
       }
     }
 
-    stage('Start App') {
+    stage('Run Container') {
       steps {
         sh '''
-          npm install -g pm2
-          pm2 stop hello-jenkins || true
-          pm2 start index.js --name hello-jenkins
+          docker rm -f $CONTAINER_NAME || true
+          docker run -d -p 3000:3000 --name $CONTAINER_NAME $IMAGE_NAME:latest
         '''
       }
     }
