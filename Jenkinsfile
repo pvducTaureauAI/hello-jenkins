@@ -12,15 +12,19 @@ pipeline {
       }
     }
 
-    stage('Install Dependencies') {
+    stage('Install') {
       steps {
         sh 'npm install'
       }
     }
 
-    stage('Run App') {
+    stage('Start App') {
       steps {
-        sh 'node index.js'
+        sh '''
+          npm install -g pm2
+          pm2 stop hello-jenkins || true
+          pm2 start index.js --name hello-jenkins
+        '''
       }
     }
   }
