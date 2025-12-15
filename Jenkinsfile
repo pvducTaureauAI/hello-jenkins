@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'node18'
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -10,16 +14,13 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        bat 'npm install'
+        sh 'npm install'
       }
     }
 
     stage('Run App') {
       steps {
-        bat '''
-        echo Starting NodeJS app...
-        node index.js
-        '''
+        sh 'node index.js'
       }
     }
   }
